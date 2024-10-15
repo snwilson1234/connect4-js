@@ -56,7 +56,6 @@ class Gameboard {
         }
 
         this.animateFall(countFilled, column, player);
-
         this.nextTurn();
     }
 
@@ -65,10 +64,12 @@ class Gameboard {
     }
 
     async animateFall(countFilled, column, player) {
-        let k = 1;
         let i = 0;
+        let fillIdx = column.children.length - countFilled - 1;
         let colNum = column.id.split("column")[1];
         for (let slot of column.children) {
+            console.log(`Slot ${slot.id} children:`, slot.children);
+            console.log(`count filled:`, countFilled);
             for (let child of slot.children) {
                 if (child.classList.contains('circle') && (child.classList.contains('white')) ) {
                     child.classList.add(player);
@@ -79,24 +80,28 @@ class Gameboard {
                 }
             }
             i += 1;
-            if (i == countFilled) {
+            if (i == fillIdx) {
                 break;
             }
         }
 
+        // Column is filled
+        if (fillIdx < 0) {
+            return;
+        }
+
         // set the last one to filled
-        let lastIdx = column.children.length-countFilled-1;
-        let lastSlot = column.children[lastIdx];
-        console.log("LAST INDEX, to be filled:",lastIdx);
+        let lastSlot = column.children[fillIdx];
         if (player == "red") {
-            this.slots[lastIdx][colNum] = 1
+            this.slots[fillIdx][colNum] = 1
         }
         else {
-            this.slots[lastIdx][colNum] = 2;
+            this.slots[fillIdx][colNum] = 2;
         }
         this.delay(200);
         lastSlot.children[1].classList.add(player);
         lastSlot.children[1].classList.remove('white');
+        lastSlot.classList.add('filled');
     }
 }
 
@@ -111,21 +116,25 @@ for (let gameboardCol of gameboardCols) {
     });
     gameboardCol.addEventListener('mouseover', () => {
         let slot = document.getElementById("slot" + gameboardCol.id.split("column")[1] + "0");
-        for (let child of slot.children) {
-            if (child.classList.contains('circle')) {
-                if (!child.classList.contains(playerInTurn)) {
-                    child.classList.remove('white');
-                    child.classList.add(playerInTurn);  
+        if (!slot.classList.contains('filled')) {
+            for (let child of slot.children) {
+                if (child.classList.contains('circle')) {
+                    if (!child.classList.contains(playerInTurn)) {
+                        child.classList.remove('white');
+                        child.classList.add(playerInTurn);  
+                    }
                 }
             }
         }
     });
     gameboardCol.addEventListener('mouseout', () => {
         let slot = document.getElementById("slot" + gameboardCol.id.split("column")[1] + "0");
-        for (let child of slot.children) {
-            if (!child.classList.contains('white')) {
-                child.classList.remove(playerInTurn);
-                child.classList.add('white');  
+        if (!slot.classList.contains('filled')) {
+            for (let child of slot.children) {
+                if (!child.classList.contains('white')) {
+                    child.classList.remove(playerInTurn);
+                    child.classList.add('white');  
+                }
             }
         }
     });
