@@ -59,17 +59,17 @@ class Gameboard {
         this.nextTurn();
     }
 
+    // Helper delay function
     delay(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
+    // Animate placing the discs into the visual board
     async animateFall(countFilled, column, player) {
         let i = 0;
         let fillIdx = column.children.length - countFilled - 1;
         let colNum = column.id.split("column")[1];
         for (let slot of column.children) {
-            console.log(`Slot ${slot.id} children:`, slot.children);
-            console.log(`count filled:`, countFilled);
             for (let child of slot.children) {
                 if (child.classList.contains('circle') && (child.classList.contains('white')) ) {
                     child.classList.add(player);
@@ -85,7 +85,7 @@ class Gameboard {
             }
         }
 
-        // Column is filled
+        // column is filled
         if (fillIdx < 0) {
             return;
         }
@@ -102,6 +102,7 @@ class Gameboard {
         lastSlot.children[1].classList.add(player);
         lastSlot.children[1].classList.remove('white');
         lastSlot.classList.add('filled');
+        console.log("Slots now:", this.slots);
     }
 }
 
@@ -117,25 +118,17 @@ for (let gameboardCol of gameboardCols) {
     gameboardCol.addEventListener('mouseover', () => {
         let slot = document.getElementById("slot" + gameboardCol.id.split("column")[1] + "0");
         if (!slot.classList.contains('filled')) {
-            for (let child of slot.children) {
-                if (child.classList.contains('circle')) {
-                    if (!child.classList.contains(playerInTurn)) {
-                        child.classList.remove('white');
-                        child.classList.add(playerInTurn);  
-                    }
-                }
-            }
+            let circle = slot.children[1];
+            circle.classList.remove('white',players[0],players[1]);
+            circle.classList.add(playerInTurn);
         }
     });
     gameboardCol.addEventListener('mouseout', () => {
         let slot = document.getElementById("slot" + gameboardCol.id.split("column")[1] + "0");
         if (!slot.classList.contains('filled')) {
-            for (let child of slot.children) {
-                if (!child.classList.contains('white')) {
-                    child.classList.remove(playerInTurn);
-                    child.classList.add('white');  
-                }
-            }
+            let circle = slot.children[1];
+            circle.classList.remove(players[0],players[1]);
+            circle.classList.add('white'); 
         }
     });
 }
