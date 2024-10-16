@@ -102,7 +102,133 @@ class Gameboard {
         lastSlot.children[1].classList.add(player);
         lastSlot.children[1].classList.remove('white');
         lastSlot.classList.add('filled');
-        console.log("Slots now:", this.slots);
+        this.checkWinner(Number(fillIdx), Number(colNum), player);
+    }
+
+    // check winner
+    checkWinner(i,j, player) {
+        this.checkHorizontalWins(i,j,player);
+        this.checkVerticalWins(i,j,player);
+        this.checkDiagonalWins(i,j,player);
+    }
+
+    checkHorizontalWins(i, j, player) {
+        let row = i;
+        let playerNum = player == "red" ? 1 : 2;
+        let count = 0;
+        // Check forwards
+        for (let k = j; k < this.slots[0].length; k++) {
+            if (this.slots[row][k] == playerNum) {
+                count++;
+                if (count == 4) {
+                    console.log("forwards hz winner: ", player);
+                }
+            }
+            else {
+                break;
+            }
+        }
+        // Check backwards
+        for (let k = j-1; k >= 0; k--) {
+            if (this.slots[row][k] == playerNum) {
+                count++;
+                if (count == 4) {
+                    console.log("hz winner: ", player);
+                }
+            }
+            else {
+                break;
+            }
+        }
+    }
+
+    checkVerticalWins(i, j, player) {
+        let col = j;
+        let playerNum = player == "red" ? 1 : 2;
+        let count = 0;
+        for (let k = i; k < this.slots.length; k++) {
+            if (this.slots[k][col] == playerNum) {
+                count++;
+                if (count == 4) {
+                    console.log("vertical winner: ", player);
+                }
+            }
+            else {
+                break;
+            }
+        }
+    }
+
+    checkDiagonalWins(i,j,player) {
+        let count = 0;
+        let playerNum = player == "red" ? 1 : 2;
+        
+        let k = i;
+        let l = j;
+
+        // down right
+        while (l >= 0 && k >= 0 && l < this.slots[0].length && k < this.slots.length) {
+            if (this.slots[k][l] == playerNum) {
+                count++;
+                if (count == 4) {
+                    console.log("downright winner: ", player);
+                }
+            }
+            else {
+                break;
+            }
+            k++;
+            l++;
+        }
+        k = i-1;
+        l = j-1;
+        // upleft
+        while (l >= 0 && k >= 0 && l < this.slots[0].length && k < this.slots.length) {
+            if (this.slots[k][l] == playerNum) {
+                count++;
+                if (count == 4) {
+                    console.log("upleft winner: ", player);
+                }
+            }
+            else {
+                break;
+            }
+            k--;
+            l--;
+        }
+        count = 0;
+        k = i;
+        l = j;
+        // up right
+        while (l >= 0 && k >= 0 && l < this.slots[0].length && k < this.slots.length) {
+            if (this.slots[k][l] == playerNum) {
+                count++;
+                if (count == 4) {
+                    console.log("upright winner: ", player);
+                }
+            }
+            else {
+                break;
+            }
+            k--;
+            l++;
+        }
+        k = i+1;
+        l = j-1;
+        // down left
+        while (l >= 0 && k >= 0 && l < this.slots[0].length && k < this.slots.length) {
+            if (this.slots[k][l] == playerNum) {
+                count++;
+                if (count == 4) {
+                    console.log("downleft winner: ", player);
+                }
+            }
+            else {
+                break;
+            }
+            k++;
+            l--;
+        }
     }
 }
 
