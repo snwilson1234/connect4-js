@@ -1,12 +1,13 @@
 let playerInTurn = "red";
-let players = ["red","blue"]
+let players = ["red","blue"];
+let playerNames = [];
 
 class Gameboard {
     constructor(height, width) {
         this.height = height;
         this.width = width;
+        this.gameActive = false;
         this.slots = Array.from(Array(height), () => new Array(width).fill(0));
-        this.build();
     }
 
     // Build the gameboard
@@ -112,6 +113,7 @@ class Gameboard {
         this.checkDiagonalWins(i,j,player);
     }
 
+    // check for 4 adjacent player discs to the left and right of the current disc
     checkHorizontalWins(i, j, player) {
         let row = i;
         let playerNum = player == "red" ? 1 : 2;
@@ -142,6 +144,7 @@ class Gameboard {
         }
     }
 
+    // check for 4 adjacent player discs below the current disc
     checkVerticalWins(i, j, player) {
         let col = j;
         let playerNum = player == "red" ? 1 : 2;
@@ -159,6 +162,7 @@ class Gameboard {
         }
     }
 
+    // check for 4 adjacent player discs in the diagonals surrounding the current disc
     checkDiagonalWins(i,j,player) {
         let count = 0;
         let playerNum = player == "red" ? 1 : 2;
@@ -230,31 +234,52 @@ class Gameboard {
             l--;
         }
     }
+
+    // add the event listeners needed to do game animation/logic
+    addGameboardListeners() {
+        // Add event listeners
+        let gameboardCols = document.getElementsByClassName('gameboard-col');
+        for (let gameboardCol of gameboardCols) {
+            gameboardCol.addEventListener('click', () => {
+                let columnObj = document.getElementById(gameboardCol.id);
+                gameboard.takeTurn(columnObj, playerInTurn);
+            });
+            gameboardCol.addEventListener('mouseover', () => {
+                let slot = document.getElementById("slot" + gameboardCol.id.split("column")[1] + "0");
+                if (!slot.classList.contains('filled')) {
+                    let circle = slot.children[1];
+                    circle.classList.remove('white',players[0],players[1]);
+                    circle.classList.add(playerInTurn);
+                }
+            });
+            gameboardCol.addEventListener('mouseout', () => {
+                let slot = document.getElementById("slot" + gameboardCol.id.split("column")[1] + "0");
+                if (!slot.classList.contains('filled')) {
+                    let circle = slot.children[1];
+                    circle.classList.remove(players[0],players[1]);
+                    circle.classList.add('white'); 
+                }
+            });
+        }
+    }
 }
 
 let gameboard = new Gameboard(6,7);
 
-// Add event listeners
-let gameboardCols = document.getElementsByClassName('gameboard-col');
-for (let gameboardCol of gameboardCols) {
-    gameboardCol.addEventListener('click', () => {
-        let columnObj = document.getElementById(gameboardCol.id);
-        gameboard.takeTurn(columnObj, playerInTurn);
-    });
-    gameboardCol.addEventListener('mouseover', () => {
-        let slot = document.getElementById("slot" + gameboardCol.id.split("column")[1] + "0");
-        if (!slot.classList.contains('filled')) {
-            let circle = slot.children[1];
-            circle.classList.remove('white',players[0],players[1]);
-            circle.classList.add(playerInTurn);
-        }
-    });
-    gameboardCol.addEventListener('mouseout', () => {
-        let slot = document.getElementById("slot" + gameboardCol.id.split("column")[1] + "0");
-        if (!slot.classList.contains('filled')) {
-            let circle = slot.children[1];
-            circle.classList.remove(players[0],players[1]);
-            circle.classList.add('white'); 
-        }
-    });
-}
+// Beginning logic
+let submitBtn = document.getElementById('btn-submit');
+
+submitBtn.addEventListener('click', (event) => {
+    event.preventDefault();
+    console.log("clicked");
+    let welcomePage = document.getElementById("welcome");
+    welcomePage.classList.add('hidden');
+    let player1Name = document.getElementById('player-one').value;
+    let player2Name = document.getElementById('player-two').value;
+    let playerForm = document.getElementById('player-form');
+    playerForm.reset();
+    playerNames = [player1Name, player2Name];
+    console.log("PLAYER NAMES NOW:", playerNames);
+    gameboard.build();
+    gameboard.addGameboardListeners();
+})

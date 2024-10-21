@@ -8,6 +8,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 </head>
 <body>
+    <div id="welcome" class="welcome">
+        <h1>Welcome to Connect4 in JavaScript!</h1>
+        <h2>Enter player names below.</h2>
+        <form id="player-form" class="player-form">
+            <label for="player-one">Player 1:</label>
+            <input type="text" name="player-one" id="player-one"></input>
+            
+            <label for="player-two">Player 2:</label>
+            <input type="text" name="player-two" id="player-two"></input>
+            
+            <input type="submit" id="btn-submit" value="Submit"></input>
+        </form>
+    </div>
     <div id="gameboard">
     </div>
     <script src="script.js"></script>
