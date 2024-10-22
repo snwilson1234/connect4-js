@@ -1,8 +1,3 @@
-let playerInTurn = "red";
-let players = ["red","blue"];
-let playerNames = [];
-let playerChips = [0,0];
-
 class Player {
     constructor(name, color) {
         this.name = name;
@@ -10,6 +5,12 @@ class Player {
         this.chipCount = 0;
     }
 }
+
+let playerInTurn = null;
+let players = [];
+// let playerNames = [];
+// let playerChips = [0,0];
+
 
 class Gameboard {
     constructor(height, width) {
@@ -49,13 +50,13 @@ class Gameboard {
     // Advance to the next turn
     nextTurn() {
         if (playerInTurn == players[0]) {
-            this.showOverlay(playerNames[1]);
-            playerInTurn = "blue";
+            this.showOverlay(players[1].name);
+            playerInTurn = players[1];
         } else {
-            this.showOverlay(playerNames[0]);
-            playerInTurn = "red";
+            this.showOverlay(players[0].name);
+            playerInTurn = players[0];
         }
-        console.log(`now it is ${playerInTurn}'s turn`)
+        console.log(`now it is ${playerInTurn.name}'s turn`)
     }
 
     // Perform logic required to execute the player's turn
@@ -85,10 +86,10 @@ class Gameboard {
         for (let slot of column.children) {
             for (let child of slot.children) {
                 if (child.classList.contains('circle') && (child.classList.contains('white')) ) {
-                    child.classList.add(player);
+                    child.classList.add(player.color);
                     child.classList.remove('white');
                     await this.delay(200);
-                    child.classList.remove(player);
+                    child.classList.remove(player.color);
                     child.classList.add('white');
                 }
             }
@@ -105,18 +106,18 @@ class Gameboard {
 
         // set the last one to filled
         let lastSlot = column.children[fillIdx];
-        if (player == "red") {
+        if (player.color == "red") {
             this.slots[fillIdx][colNum] = 1
-            playerChips[0] += 1;
-            this.updatePlayerChips(1);
+            player.chipCount += 1;
+            this.updatePlayerChips(player);
         }
         else {
             this.slots[fillIdx][colNum] = 2;
-            playerChips[1] += 1;
-            this.updatePlayerChips(2);
+            player.chipCount += 1;
+            this.updatePlayerChips(player);
         }
         this.delay(200);
-        lastSlot.children[1].classList.add(player);
+        lastSlot.children[1].classList.add(player.color);
         lastSlot.children[1].classList.remove('white');
         lastSlot.classList.add('filled');
         this.checkWinner(Number(fillIdx), Number(colNum), player);
@@ -142,7 +143,7 @@ class Gameboard {
     // check for 4 adjacent player discs to the left and right of the current disc
     checkHorizontalWins(i, j, player) {
         let row = i;
-        let playerNum = player == "red" ? 1 : 2;
+        let playerNum = player.color == "red" ? 1 : 2;
         let count = 0;
         // Check forwards
         for (let k = j; k < this.slots[0].length; k++) {
@@ -173,7 +174,7 @@ class Gameboard {
     // check for 4 adjacent player discs below the current disc
     checkVerticalWins(i, j, player) {
         let col = j;
-        let playerNum = player == "red" ? 1 : 2;
+        let playerNum = player.color == "red" ? 1 : 2;
         let count = 0;
         for (let k = i; k < this.slots.length; k++) {
             if (this.slots[k][col] == playerNum) {
@@ -191,7 +192,7 @@ class Gameboard {
     // check for 4 adjacent player discs in the diagonals surrounding the current disc
     checkDiagonalWins(i,j,player) {
         let count = 0;
-        let playerNum = player == "red" ? 1 : 2;
+        let playerNum = player.color == "red" ? 1 : 2;
         
         let k = i;
         let l = j;
@@ -274,24 +275,24 @@ class Gameboard {
                 let slot = document.getElementById("slot" + gameboardCol.id.split("column")[1] + "0");
                 if (!slot.classList.contains('filled')) {
                     let circle = slot.children[1];
-                    circle.classList.remove('white',players[0],players[1]);
-                    circle.classList.add(playerInTurn);
+                    circle.classList.remove('white',players[0].color,players[1].color);
+                    circle.classList.add(playerInTurn.color);
                 }
             });
             gameboardCol.addEventListener('mouseout', () => {
                 let slot = document.getElementById("slot" + gameboardCol.id.split("column")[1] + "0");
                 if (!slot.classList.contains('filled')) {
                     let circle = slot.children[1];
-                    circle.classList.remove(players[0],players[1]);
+                    circle.classList.remove(players[0].color,players[1].color);
                     circle.classList.add('white'); 
                 }
             });
         }
     }
 
-    updatePlayerChips(playerNum) {
-        let playerChipItem = document.getElementById(`player-${playerNum}-chipcount`);
-        playerChipItem.textContent = playerChips[playerNum-1];
+    updatePlayerChips(player) {
+        let playerChipItem = document.getElementById(`player-${player.color}-chipcount`);
+        playerChipItem.textContent = player.chipCount;
     }
 }
 
@@ -309,8 +310,8 @@ document.getElementById('btn-submit').addEventListener('click', (event) => {
     let player1Name = document.getElementById('player-one-field').value;
     let player2Name = document.getElementById('player-two-field').value;
     
-    let player1GameNameElem = document.getElementById('player-1-name');
-    let player2GameNameElem = document.getElementById('player-2-name');
+    let player1GameNameElem = document.getElementById('player-red-name');
+    let player2GameNameElem = document.getElementById('player-blue-name');
 
     // show the gameboard header and set player names
     player1GameNameElem.textContent = player1Name;
@@ -320,6 +321,12 @@ document.getElementById('btn-submit').addEventListener('click', (event) => {
     document.getElementById('player-form').reset();
     
     playerNames = [player1Name, player2Name];
+
+    // Create the players (more work todo here to transfer Players to objects)
+    let player1 = new Player(player1Name, "red");
+    let player2 = new Player(player2Name, "blue");
+    players = [player1,player2];
+    playerInTurn = player1;
     
     // Build the gameboard
     gameboard.build();
