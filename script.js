@@ -1,6 +1,7 @@
 let playerInTurn = "red";
 let players = ["red","blue"];
 let playerNames = [];
+let playerChips = [0,0];
 
 class Gameboard {
     constructor(height, width) {
@@ -40,10 +41,13 @@ class Gameboard {
     // Advance to the next turn
     nextTurn() {
         if (playerInTurn == players[0]) {
+            this.showOverlay(playerNames[1]);
             playerInTurn = "blue";
         } else {
+            this.showOverlay(playerNames[0]);
             playerInTurn = "red";
         }
+        console.log(`now it is ${playerInTurn}'s turn`)
     }
 
     // Perform logic required to execute the player's turn
@@ -95,15 +99,29 @@ class Gameboard {
         let lastSlot = column.children[fillIdx];
         if (player == "red") {
             this.slots[fillIdx][colNum] = 1
+            playerChips[0] += 1;
+            this.updatePlayerChips(1);
         }
         else {
             this.slots[fillIdx][colNum] = 2;
+            playerChips[1] += 1;
+            this.updatePlayerChips(2);
         }
         this.delay(200);
         lastSlot.children[1].classList.add(player);
         lastSlot.children[1].classList.remove('white');
         lastSlot.classList.add('filled');
         this.checkWinner(Number(fillIdx), Number(colNum), player);
+    }
+
+    async showOverlay(playerName) {
+        let overlayElem = document.getElementById("overlay");
+        let overlayText = document.getElementById("overlay-message");
+        await this.delay(2000);
+        overlayText.textContent = `Now it is ${playerName}'s turn.`;
+        overlayElem.classList.remove("hidden");
+        await this.delay(2000);
+        overlayElem.classList.add("hidden");
     }
 
     // check winner
@@ -262,6 +280,11 @@ class Gameboard {
             });
         }
     }
+
+    updatePlayerChips(playerNum) {
+        let playerChipItem = document.getElementById(`player-${playerNum}-chipcount`);
+        playerChipItem.textContent = playerChips[playerNum-1];
+    }
 }
 
 let gameboard = new Gameboard(6,7);
@@ -277,6 +300,12 @@ submitBtn.addEventListener('click', (event) => {
     let player1Name = document.getElementById('player-one').value;
     let player2Name = document.getElementById('player-two').value;
     let playerForm = document.getElementById('player-form');
+    let player1GameNameElem = document.getElementById('player-1-name');
+    let player2GameNameElem = document.getElementById('player-2-name');
+    let gameboardHeader = document.getElementById('players-chips-container');
+    gameboardHeader.classList.remove('hidden');
+    player1GameNameElem.textContent = player1Name;
+    player2GameNameElem.textContent = player2Name;
     playerForm.reset();
     playerNames = [player1Name, player2Name];
     console.log("PLAYER NAMES NOW:", playerNames);

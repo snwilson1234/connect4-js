@@ -18,6 +18,21 @@ header {
     padding: 0;
 }
 
+.overlay {
+    position: absolute;
+    background-color: rgb(0,0,0,0.5);
+    width: 100%;
+    height: 100%;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+#overlay-message {
+    color: white;
+}
+
 .welcome {
     display: flex;
     flex-direction: column;
@@ -53,6 +68,25 @@ h2 {
     font-size: 1.5rem;
     color: #333;
 }
+h3 {
+    font-family: Arial, sans-serif;
+    font-size: 1rem;
+    color: #333;
+}
+
+.player-chips-container {
+    display: flex;
+    flex-direction: column;
+    line-height: 0;
+    text-align: center;
+}
+.players-chips-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    width: 100%;
+}
+
 
 #gameboard {
     display: flex;
