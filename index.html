@@ -8,33 +8,33 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 </head>
 <body>
-    <div id="welcome" class="welcome">
+    <div id="welcome-page" class="welcome-page">
         <h1>Welcome to Connect4 in JavaScript!</h1>
         <h2>Enter player names below.</h2>
         <form id="player-form" class="player-form">
-            <label for="player-one">Player 1:</label>
-            <input type="text" name="player-one" id="player-one"></input>
+            <label for="player-one-field">Player 1:</label>
+            <input type="text" name="player-one-field" id="player-one-field"></input>
             
-            <label for="player-two">Player 2:</label>
-            <input type="text" name="player-two" id="player-two"></input>
+            <label for="player-two-field">Player 2:</label>
+            <input type="text" name="player-two-field" id="player-two-field"></input>
             
-            <input type="submit" id="btn-submit" value="Submit"></input>
+            <input type="submit" id="btn-submit" value="Start Game"></input>
         </form>
     </div>
-    <div id="players-chips-container" class="players-chips-container hidden">
-        <div id="player-1-chips" class="player-chips-container">
-            <h2 id="player-1-name">Player 1</h2>
-            <h3 id="player-1-chipcount">0</h3>
+    <div id="gameboard-header-container" class="gameboard-header-container hidden">
+        <div id="player-1-chips-played" class="player-chips-played-container">
+            <h2 id="player-1-name" style="color: red;">Player 1</h2>
+            <h3 id="player-1-chipcount" style="color: red;">0</h3>
         </div>
-        <div id="player-2-chips" class="player-chips-container">
-            <h2 id="player-2-name">Player 2</h2>
-            <h3 id="player-2-chipcount">0</h3>
+        <div id="player-2-chips-played" class="player-chips-played-container">
+            <h2 id="player-2-name" style="color: blue;">Player 2</h2>
+            <h3 id="player-2-chipcount" style="color: blue;">0</h3>
         </div>
     </div>
     <div id="gameboard">
     </div>
     <div id="overlay" class="overlay hidden">
-        <h1 id="overlay-message">Helloworld</h1>
+        <h1 id="overlay-message"></h1>
     </div>
     <script src="script.js"></script>
 </body>

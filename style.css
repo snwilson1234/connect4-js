@@ -33,10 +33,11 @@ header {
     color: white;
 }
 
-.welcome {
+.welcome-page {
     display: flex;
     flex-direction: column;
     visibility: visible;
+    align-items: center;
 }
 
 .hidden {
@@ -74,13 +75,13 @@ h3 {
     color: #333;
 }
 
-.player-chips-container {
+.player-chips-played-container {
     display: flex;
     flex-direction: column;
     line-height: 0;
     text-align: center;
 }
-.players-chips-container {
+.gameboard-header-container {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;

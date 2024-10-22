@@ -3,6 +3,14 @@ let players = ["red","blue"];
 let playerNames = [];
 let playerChips = [0,0];
 
+class Player {
+    constructor(name, color) {
+        this.name = name;
+        this.color = color;
+        this.chipCount = 0;
+    }
+}
+
 class Gameboard {
     constructor(height, width) {
         this.height = height;
@@ -289,26 +297,31 @@ class Gameboard {
 
 let gameboard = new Gameboard(6,7);
 
-// Beginning logic
-let submitBtn = document.getElementById('btn-submit');
-
-submitBtn.addEventListener('click', (event) => {
+// Beginning logic after form submit
+document.getElementById('btn-submit').addEventListener('click', (event) => {
     event.preventDefault();
-    console.log("clicked");
-    let welcomePage = document.getElementById("welcome");
-    welcomePage.classList.add('hidden');
-    let player1Name = document.getElementById('player-one').value;
-    let player2Name = document.getElementById('player-two').value;
-    let playerForm = document.getElementById('player-form');
+
+    // hide the welcome page and show the gameboard header (gameboard built below)
+    document.getElementById("welcome-page").classList.add('hidden');
+    document.getElementById('gameboard-header-container').classList.remove('hidden');
+
+    // extract players' names from the form
+    let player1Name = document.getElementById('player-one-field').value;
+    let player2Name = document.getElementById('player-two-field').value;
+    
     let player1GameNameElem = document.getElementById('player-1-name');
     let player2GameNameElem = document.getElementById('player-2-name');
-    let gameboardHeader = document.getElementById('players-chips-container');
-    gameboardHeader.classList.remove('hidden');
+
+    // show the gameboard header and set player names
     player1GameNameElem.textContent = player1Name;
     player2GameNameElem.textContent = player2Name;
-    playerForm.reset();
+
+    // Reset the form
+    document.getElementById('player-form').reset();
+    
     playerNames = [player1Name, player2Name];
-    console.log("PLAYER NAMES NOW:", playerNames);
+    
+    // Build the gameboard
     gameboard.build();
     gameboard.addGameboardListeners();
 })
