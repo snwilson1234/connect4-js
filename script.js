@@ -56,7 +56,6 @@ class Gameboard {
             this.showOverlay(players[0].name);
             playerInTurn = players[0];
         }
-        console.log(`now it is ${playerInTurn.name}'s turn`)
     }
 
     // Perform logic required to execute the player's turn
@@ -133,11 +132,31 @@ class Gameboard {
         overlayElem.classList.add("hidden");
     }
 
+    async showWinner(playerName) {
+        let overlayElem = document.getElementById("overlay");
+        let overlayText = document.getElementById("overlay-message");
+        await this.delay(2000);
+        overlayText.textContent = `${playerName} wins!`;
+        overlayElem.classList.remove("hidden");
+        await this.delay(2000);
+        overlayElem.classList.add("hidden");
+        let gameboard = document.getElementById("gameboard");
+        gameboard.classList.add("hidden");
+        let gameOverText = document.createElement("h1");
+        gameOverText.textContent = `Game is over. ${playerName} won. Refresh to play again.`
+
+    }
+
     // check winner
     checkWinner(i,j, player) {
-        this.checkHorizontalWins(i,j,player);
-        this.checkVerticalWins(i,j,player);
-        this.checkDiagonalWins(i,j,player);
+        if (
+            this.checkHorizontalWins(i,j,player) ||
+            this.checkVerticalWins(i,j,player) ||
+            this.checkDiagonalWins(i,j,player)
+        ) {
+            this.showWinner(player.name);
+        }
+
     }
 
     // check for 4 adjacent player discs to the left and right of the current disc
@@ -150,7 +169,7 @@ class Gameboard {
             if (this.slots[row][k] == playerNum) {
                 count++;
                 if (count == 4) {
-                    console.log("forwards hz winner: ", player);
+                    return true;
                 }
             }
             else {
@@ -162,13 +181,14 @@ class Gameboard {
             if (this.slots[row][k] == playerNum) {
                 count++;
                 if (count == 4) {
-                    console.log("hz winner: ", player);
+                    return true;
                 }
             }
             else {
                 break;
             }
         }
+        return false;
     }
 
     // check for 4 adjacent player discs below the current disc
@@ -180,13 +200,14 @@ class Gameboard {
             if (this.slots[k][col] == playerNum) {
                 count++;
                 if (count == 4) {
-                    console.log("vertical winner: ", player);
+                    return true;
                 }
             }
             else {
                 break;
             }
         }
+        return false;
     }
 
     // check for 4 adjacent player discs in the diagonals surrounding the current disc
@@ -202,7 +223,7 @@ class Gameboard {
             if (this.slots[k][l] == playerNum) {
                 count++;
                 if (count == 4) {
-                    console.log("downright winner: ", player);
+                    return true;
                 }
             }
             else {
@@ -218,7 +239,7 @@ class Gameboard {
             if (this.slots[k][l] == playerNum) {
                 count++;
                 if (count == 4) {
-                    console.log("upleft winner: ", player);
+                    return true;
                 }
             }
             else {
@@ -235,7 +256,7 @@ class Gameboard {
             if (this.slots[k][l] == playerNum) {
                 count++;
                 if (count == 4) {
-                    console.log("upright winner: ", player);
+                    return true;
                 }
             }
             else {
@@ -251,7 +272,7 @@ class Gameboard {
             if (this.slots[k][l] == playerNum) {
                 count++;
                 if (count == 4) {
-                    console.log("downleft winner: ", player);
+                    return true;
                 }
             }
             else {
@@ -260,6 +281,8 @@ class Gameboard {
             k++;
             l--;
         }
+
+        return false;
     }
 
     // add the event listeners needed to do game animation/logic
