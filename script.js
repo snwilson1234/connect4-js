@@ -8,9 +8,6 @@ class Player {
 
 let playerInTurn = null;
 let players = [];
-// let playerNames = [];
-// let playerChips = [0,0];
-
 
 class Gameboard {
     constructor(height, width) {
@@ -50,10 +47,10 @@ class Gameboard {
     // Advance to the next turn
     nextTurn() {
         if (playerInTurn == players[0]) {
-            this.showOverlay(players[1].name);
+            this.showOverlay(players[1].name, "nextTurn");
             playerInTurn = players[1];
         } else {
-            this.showOverlay(players[0].name);
+            this.showOverlay(players[0].name, "nextTurn");
             playerInTurn = players[0];
         }
     }
@@ -67,9 +64,10 @@ class Gameboard {
                 countFilled += 1;
             }
         }
+        let fillIdx = column.children.length - countFilled - 1;
 
-        this.animateFall(countFilled, column, player);
-        this.nextTurn();
+        // let winner = this.animateFall(fillIdx, column, player);
+        this.animateFall(fillIdx, column, player);
     }
 
     // Helper delay function
@@ -78,13 +76,15 @@ class Gameboard {
     }
 
     // Animate placing the discs into the visual board
-    async animateFall(countFilled, column, player) {
+    async animateFall(fillIdx, column, player) {
         let i = 0;
-        let fillIdx = column.children.length - countFilled - 1;
         let colNum = column.id.split("column")[1];
         for (let slot of column.children) {
             for (let child of slot.children) {
-                if (child.classList.contains('circle') && (child.classList.contains('white')) ) {
+                if (
+                    child.classList.contains('circle') && 
+                    child.classList.contains('white') 
+                ) {
                     child.classList.add(player.color);
                     child.classList.remove('white');
                     await this.delay(200);
@@ -105,6 +105,10 @@ class Gameboard {
 
         // set the last one to filled
         let lastSlot = column.children[fillIdx];
+        lastSlot.children[1].classList.add(player.color);
+        lastSlot.children[1].classList.remove('white');
+        lastSlot.classList.add('filled');
+
         if (player.color == "red") {
             this.slots[fillIdx][colNum] = 1
             player.chipCount += 1;
@@ -115,36 +119,32 @@ class Gameboard {
             player.chipCount += 1;
             this.updatePlayerChips(player);
         }
-        this.delay(200);
-        lastSlot.children[1].classList.add(player.color);
-        lastSlot.children[1].classList.remove('white');
-        lastSlot.classList.add('filled');
-        this.checkWinner(Number(fillIdx), Number(colNum), player);
+        let winner = this.checkWinner(Number(fillIdx), Number(colNum), player);
+        console.log("winner:", winner);
+        if (!winner) {
+            this.nextTurn();
+        }
+        else {
+            this.showOverlay(player.name, "win");
+        }
     }
 
-    async showOverlay(playerName) {
+    async showOverlay(playerName, messageType) {
         let overlayElem = document.getElementById("overlay");
         let overlayText = document.getElementById("overlay-message");
-        await this.delay(2000);
-        overlayText.textContent = `Now it is ${playerName}'s turn.`;
-        overlayElem.classList.remove("hidden");
-        await this.delay(2000);
-        overlayElem.classList.add("hidden");
-    }
 
-    async showWinner(playerName) {
-        let overlayElem = document.getElementById("overlay");
-        let overlayText = document.getElementById("overlay-message");
         await this.delay(2000);
-        overlayText.textContent = `${playerName} wins!`;
-        overlayElem.classList.remove("hidden");
-        await this.delay(2000);
-        overlayElem.classList.add("hidden");
-        let gameboard = document.getElementById("gameboard");
-        gameboard.classList.add("hidden");
-        let gameOverText = document.createElement("h1");
-        gameOverText.textContent = `Game is over. ${playerName} won. Refresh to play again.`
 
+        if (messageType == "nextTurn") {
+            overlayText.textContent = `Now it is ${playerName}'s turn.`;
+            overlayElem.classList.remove("hidden");
+            await this.delay(2000);
+            overlayElem.classList.add("hidden");
+        }
+        else {
+            overlayText.textContent = `${playerName} wins! Refresh to play again.`;
+            overlayElem.classList.remove("hidden");
+        }
     }
 
     // check winner
@@ -154,9 +154,9 @@ class Gameboard {
             this.checkVerticalWins(i,j,player) ||
             this.checkDiagonalWins(i,j,player)
         ) {
-            this.showWinner(player.name);
+            return true;
         }
-
+        return false;
     }
 
     // check for 4 adjacent player discs to the left and right of the current disc
