@@ -66,8 +66,28 @@ class Gameboard {
         }
         let fillIdx = column.children.length - countFilled - 1;
 
-        // let winner = this.animateFall(fillIdx, column, player);
         this.animateFall(fillIdx, column, player);
+        this.updateSlots(fillIdx, colNum, player);
+        let winner = this.checkWinner(Number(fillIdx), Number(colNum), player);
+        if (!winner) {
+            this.nextTurn();
+        }
+        else {
+            this.showOverlay(player.name, "win");
+        }
+    }
+
+    updateSlots(fillIdx, colNum, player) {
+        if (player.color == "red") {
+            this.slots[fillIdx][colNum] = 1
+            player.chipCount += 1;
+            this.updatePlayerChips(player);
+        }
+        else {
+            this.slots[fillIdx][colNum] = 2;
+            player.chipCount += 1;
+            this.updatePlayerChips(player);
+        }
     }
 
     // Helper delay function
@@ -108,27 +128,9 @@ class Gameboard {
         lastSlot.children[1].classList.add(player.color);
         lastSlot.children[1].classList.remove('white');
         lastSlot.classList.add('filled');
-
-        if (player.color == "red") {
-            this.slots[fillIdx][colNum] = 1
-            player.chipCount += 1;
-            this.updatePlayerChips(player);
-        }
-        else {
-            this.slots[fillIdx][colNum] = 2;
-            player.chipCount += 1;
-            this.updatePlayerChips(player);
-        }
-        let winner = this.checkWinner(Number(fillIdx), Number(colNum), player);
-        console.log("winner:", winner);
-        if (!winner) {
-            this.nextTurn();
-        }
-        else {
-            this.showOverlay(player.name, "win");
-        }
     }
 
+    // Show overlay message when game events happen
     async showOverlay(playerName, messageType) {
         let overlayElem = document.getElementById("overlay");
         let overlayText = document.getElementById("overlay-message");
@@ -313,6 +315,7 @@ class Gameboard {
         }
     }
 
+    // Update player's chips played display
     updatePlayerChips(player) {
         let playerChipItem = document.getElementById(`player-${player.color}-chipcount`);
         playerChipItem.textContent = player.chipCount;
