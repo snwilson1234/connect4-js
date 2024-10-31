@@ -346,8 +346,6 @@ document.getElementById('btn-submit').addEventListener('click', (event) => {
     // Reset the form
     document.getElementById('player-form').reset();
     
-    playerNames = [player1Name, player2Name];
-
     // Create the players (more work todo here to transfer Players to objects)
     let player1 = new Player(player1Name, "red");
     let player2 = new Player(player2Name, "blue");
